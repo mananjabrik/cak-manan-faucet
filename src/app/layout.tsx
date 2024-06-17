@@ -6,9 +6,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Faucet Pesse',
-  description: 'Testnet faucet',
+  description: 'Testnet Faucet',
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
