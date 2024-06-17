@@ -3,7 +3,6 @@ import { Button } from './theme';
 import { isAddress } from 'viem';
 export const Faucet = () => {
   const [address, setAddress] = useState<string>();
-  console.log(address);
   const triggerClaim = async () => {
     console.log(isAddress(address ?? ''));
   };
