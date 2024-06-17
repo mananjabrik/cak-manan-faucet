@@ -25,7 +25,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
       className += 'btn-primary';
   }
   return (
-    <button type="button" className={className + ` ${option}`}>
+    <button type="button" className={className + ` ${option}`} {...props}>
       {children}
     </button>
   );

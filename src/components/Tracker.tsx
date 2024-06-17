@@ -6,7 +6,7 @@ export const Tracker = () => {
   return (
     <div className="overflow-hidden mt-5 rounded">
       <div>
-        <h2 className="text-xl text-center">Tracker</h2>
+        <h2 className="text-xl text-center pb-8">Tracker</h2>
       </div>
 
       <div className="relative overflow-x-auto shadow-md rounded-lg">
