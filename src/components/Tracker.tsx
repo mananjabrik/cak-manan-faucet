@@ -16,22 +16,25 @@ interface IDto {
 }
 
 export const Tracker = () => {
-  const shortAddressWallet = '0x9B9862654eA3F3cC054276e2A442164cBb2B15F4'; // todo get wallet address
   const [data, setData] = useState<IDto[]>();
+  const [loading, setLoading] = useState<boolean>();
 
   const getLatesTx = async () => {
-    const { data: response } = await axios.get<{
-      status: number;
-      data: IDto[];
-    }>('http://localhost:3000/api/transaction');
-    setData(response.data);
+    try {
+      setLoading(true);
+      const { data: response } = await axios.get<{
+        status: number;
+        data: IDto[];
+      }>('http://localhost:3000/api/transaction');
+      setData(response.data);
+    } finally {
+      setLoading(false);
+    }
   };
-
-  console.log(data);
 
   useEffect(() => {
     getLatesTx();
-  }, []);
+  }, [loading]);
 
   return (
     <div className="overflow-hidden mt-5 rounded">
@@ -74,7 +77,7 @@ export const Tracker = () => {
                       PSE {formatEther(BigInt(e.value))}
                     </td>
                     <td className="px-6 py-4">
-                      {formatDate(e.timeStamp, 'dd MMMM yy hh:mm')}
+                      {formatDate(e.timeStamp, 'dd MMM yyyy/hh:mm')}
                     </td>
                     <td className="px-6 py-4">
                       <a

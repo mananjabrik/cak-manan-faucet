@@ -34,7 +34,21 @@ const getAllTransactionByWalletAddress = async (address: string) => {
 
 };
 
-const createTransaction = async (address: string, data: Omit<walet, "id">) => {
+const createTransaction = async (data: Omit<walet, "id">) => {
+
+  const createTx = await prisma.walet.create({
+    data: data
+  })
+  if (createTx) {
+    return true
+  }
+  return false
+
+
+}
+
+const tranferFromHotWallet = async (address: string) => {
+  if (!isAddress(address)) throw new Error('invalid address')
 
   const isExist = await prisma.walet.findFirst({
     where: {
@@ -61,20 +75,7 @@ const createTransaction = async (address: string, data: Omit<walet, "id">) => {
       throw new Error("One transaction per day is allowed.");
     }
 
-  } else {
-    const createTx = await prisma.walet.create({
-      data: data
-    })
-    if (createTx) {
-      return true
-    }
-    return false
   }
-
-}
-
-const tranferFromHotWallet = async (address: string) => {
-  if (!isAddress(address)) throw new Error('invalid address')
   const hash = await nodeClient.sendTransaction({
     to: address,
     value: parseEther('0.1')
@@ -104,8 +105,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
         break;
       case 'POST':
-        const tx = await tranferFromHotWallet(req.query.address as string)
-        const create = await createTransaction(req.query.address as string, {
+        const tx = await tranferFromHotWallet(req.query.address + ''.toLowerCase())
+        const create = await createTransaction({
           block: Number(tx.blockNumber),
           hash: tx.hash,
           status: true,

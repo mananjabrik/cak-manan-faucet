@@ -19,7 +19,7 @@ export const Faucet = () => {
       >(`http://localhost:3000/api/transaction/${address}`);
     } catch (e: any | AxiosError) {
       if (axios.isAxiosError(e)) {
-        return alert(e?.response?.data?.message);
+        return alert('Error: ' + e?.response?.data?.message);
       }
     } finally {
       setIsLoading(false);
