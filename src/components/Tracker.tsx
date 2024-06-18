@@ -38,8 +38,11 @@ export const Tracker = () => {
 
   return (
     <div className="overflow-hidden mt-5 rounded">
-      <div>
-        <h2 className="text-xl text-center pb-8">Tracker</h2>
+      <div className="pb-8">
+        <h2 className="text-xl text-center">Tracker</h2>
+        <p className="text-center tracking-tighter text-gray-500 md:text-lg dark:text-gray-400">
+          Latest Transaction
+        </p>
       </div>
 
       <div className="relative overflow-x-auto shadow-md rounded-lg">
