@@ -16,7 +16,7 @@ export const Faucet = () => {
           status: number;
           data: boolean;
         }
-      >(`http://localhost:3000/api/transaction/${address}`);
+      >(`/api/transaction/${address}`);
     } catch (e: any | AxiosError) {
       if (axios.isAxiosError(e)) {
         return alert('Error: ' + e?.response?.data?.message);

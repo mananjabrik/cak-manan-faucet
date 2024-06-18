@@ -25,7 +25,7 @@ export const Tracker = () => {
       const { data: response } = await axios.get<{
         status: number;
         data: IDto[];
-      }>('http://localhost:3000/api/transaction');
+      }>('/api/transaction');
       setData(response.data);
     } finally {
       setLoading(false);
