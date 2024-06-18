@@ -1,8 +1,38 @@
 import { formatAddress } from '@/lib';
+import { walet } from '@prisma/client';
+import axios from 'axios';
 import { format, formatDate } from 'date-fns';
+import { useEffect, useState } from 'react';
+import { formatEther, parseEther } from 'viem';
+
+interface IDto {
+  block: number;
+  hash: string;
+  id: number;
+  status: boolean;
+  timeStamp: Date;
+  value: string;
+  walletAddress: string;
+}
 
 export const Tracker = () => {
   const shortAddressWallet = '0x9B9862654eA3F3cC054276e2A442164cBb2B15F4'; // todo get wallet address
+  const [data, setData] = useState<IDto[]>();
+
+  const getLatesTx = async () => {
+    const { data: response } = await axios.get<{
+      status: number;
+      data: IDto[];
+    }>('http://localhost:3000/api/transaction');
+    setData(response.data);
+  };
+
+  console.log(data);
+
+  useEffect(() => {
+    getLatesTx();
+  }, []);
+
   return (
     <div className="overflow-hidden mt-5 rounded">
       <div>
@@ -22,21 +52,42 @@ export const Tracker = () => {
               <th scope="col" className="px-6 py-3">
                 Claim at
               </th>
+              <th scope="col" className="px-6 py-3">
+                Detail
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                {formatAddress(shortAddressWallet)}
-              </th>
-              <td className="px-6 py-4">PSE200</td>
-              <td className="px-6 py-4">
-                {formatDate(new Date(), 'dd/mm/yy hh:mm')}
-              </td>
-            </tr>
+            {data
+              ? data.map((e) => (
+                  <tr
+                    className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
+                    key={e.id}
+                  >
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      {formatAddress(e.walletAddress)}
+                    </th>
+                    <td className="px-6 py-4">
+                      PSE {formatEther(BigInt(e.value))}
+                    </td>
+                    <td className="px-6 py-4">
+                      {formatDate(e.timeStamp, 'dd MMMM yy hh:mm')}
+                    </td>
+                    <td className="px-6 py-4">
+                      <a
+                        href={`https://explorer.cakmanan.site/tx/${e.hash}`}
+                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        target="_blank"
+                      >
+                        Explorer
+                      </a>
+                    </td>
+                  </tr>
+                ))
+              : null}
           </tbody>
         </table>
       </div>

@@ -22,6 +22,9 @@ const getAllTransactionByWalletAddress = async (address: string) => {
     where: {
       walletAddress: address,
     },
+    orderBy: {
+      id: "desc"
+    }
   });
 
   // need to convert bigint to number 
@@ -32,13 +35,42 @@ const getAllTransactionByWalletAddress = async (address: string) => {
 };
 
 const createTransaction = async (address: string, data: Omit<walet, "id">) => {
-  const createTx = await prisma.walet.create({
-    data: data
+
+  const isExist = await prisma.walet.findFirst({
+    where: {
+      walletAddress: address
+    },
+    orderBy: {
+      id: "desc"
+    }
   })
-  if (createTx) {
-    return true
+
+  if (isExist) {
+    // Limit one tx per day logic
+    const lastTxTime = isExist.timeStamp;
+    const today = new Date();
+
+    // Compare only the date part, ignoring time
+    const isSameDay = (
+      lastTxTime.getFullYear() === today.getFullYear() &&
+      lastTxTime.getMonth() === today.getMonth() &&
+      lastTxTime.getDate() === today.getDate()
+    );
+
+    if (isSameDay) {
+      throw new Error("One transaction per day is allowed.");
+    }
+
+  } else {
+    const createTx = await prisma.walet.create({
+      data: data
+    })
+    if (createTx) {
+      return true
+    }
+    return false
   }
-  return false
+
 }
 
 const tranferFromHotWallet = async (address: string) => {
